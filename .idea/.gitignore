@@ -1,6 +1,10 @@
 # Default ignored files
 /shelf/
 /workspace.xml
+.idea/
+*.iml
+*.iws
+*.properties
 # Datasource local storage ignored files
 /../../../../../../:\Users\user\IdeaProjects\options\.idea/dataSources/
 /dataSources.local.xml
