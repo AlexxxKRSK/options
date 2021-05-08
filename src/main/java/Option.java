@@ -5,6 +5,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Class for entries from Quik
+ */
 public class Option {
 //    date date NOT NULL,
 //    code character varying NOT NULL,

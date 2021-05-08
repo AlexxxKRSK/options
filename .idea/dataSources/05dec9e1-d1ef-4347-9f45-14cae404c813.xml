@@ -789,8 +789,13 @@ false Zulu
     <database id="2" parent="1" name="options">
       <ObjectId>16394</ObjectId>
       <Owner>postgres</Owner>
-      <IntrospectionStateNumber>146709</IntrospectionStateNumber>
+      <IntrospectionStateNumber>157180</IntrospectionStateNumber>
       <Current>1</Current>
+      <Relations>sequence|table|24972|24974|13
+sequence|table|24983|24985|13
+sequence|table|24994|24996|13
+sequence|table|25005|25007|13
+</Relations>
     </database>
     <database id="3" parent="1" name="postgres">
       <ObjectId>13442</ObjectId>
@@ -865,7 +870,7 @@ UC/10
 </Acl>
       <StateNumber>287</StateNumber>
       <Owner>postgres</Owner>
-      <IntrospectionStateNumber>146710</IntrospectionStateNumber>
+      <IntrospectionStateNumber>157181</IntrospectionStateNumber>
       <Current>1</Current>
     </schema>
     <extension id="18" parent="2" name="plpgsql">
@@ -965,115 +970,159 @@ UC/10
       <HandlerId>335</HandlerId>
       <Type>index</Type>
     </access-method>
-    <table id="30" parent="17" name="now">
-      <ObjectId>24928</ObjectId>
+    <sequence id="30" parent="17" name="others_id_seq">
+      <ObjectId>24994</ObjectId>
       <Owner>postgres</Owner>
-      <StateNumber>146706</StateNumber>
-    </table>
-    <table id="31" parent="17" name="previous">
-      <ObjectId>24920</ObjectId>
+      <StateNumber>157176</StateNumber>
+      <DataType>integer|0s</DataType>
+    </sequence>
+    <sequence id="31" parent="17" name="othersday_id_seq">
+      <ObjectId>25005</ObjectId>
       <Owner>postgres</Owner>
-      <StateNumber>146705</StateNumber>
+      <StateNumber>157179</StateNumber>
+      <DataType>integer|0s</DataType>
+    </sequence>
+    <sequence id="32" parent="17" name="ri_id_seq">
+      <ObjectId>24983</ObjectId>
+      <Owner>postgres</Owner>
+      <StateNumber>157173</StateNumber>
+      <DataType>integer|0s</DataType>
+    </sequence>
+    <sequence id="33" parent="17" name="riday_id_seq">
+      <ObjectId>24972</ObjectId>
+      <Owner>postgres</Owner>
+      <StateNumber>157157</StateNumber>
+      <DataType>integer|0s</DataType>
+    </sequence>
+    <table id="34" parent="17" name="now">
+      <ObjectId>24945</ObjectId>
+      <Owner>postgres</Owner>
+      <StateNumber>151927</StateNumber>
     </table>
-    <table id="32" parent="17" name="previousDay">
+    <table id="35" parent="17" name="others">
+      <ObjectId>24996</ObjectId>
+      <Owner>postgres</Owner>
+      <StateNumber>157176</StateNumber>
+    </table>
+    <table id="36" parent="17" name="othersday">
+      <ObjectId>25007</ObjectId>
+      <Owner>postgres</Owner>
+      <StateNumber>157179</StateNumber>
+    </table>
+    <table id="37" parent="17" name="previous">
+      <ObjectId>24937</ObjectId>
+      <Owner>postgres</Owner>
+      <StateNumber>151926</StateNumber>
+    </table>
+    <table id="38" parent="17" name="previousDay">
       <ObjectId>24806</ObjectId>
       <Owner>postgres</Owner>
       <StateNumber>146696</StateNumber>
     </table>
-    <column id="33" parent="30" name="date">
+    <table id="39" parent="17" name="ri">
+      <ObjectId>24985</ObjectId>
+      <Owner>postgres</Owner>
+      <StateNumber>157173</StateNumber>
+    </table>
+    <table id="40" parent="17" name="riday">
+      <ObjectId>24974</ObjectId>
+      <Owner>postgres</Owner>
+      <StateNumber>157157</StateNumber>
+    </table>
+    <column id="41" parent="34" name="date">
       <Position>1</Position>
       <DataType>date|0s</DataType>
       <NotNull>1</NotNull>
-      <StateNumber>146706</StateNumber>
+      <StateNumber>151927</StateNumber>
       <TypeId>1082</TypeId>
     </column>
-    <column id="34" parent="30" name="code">
+    <column id="42" parent="34" name="code">
       <Position>2</Position>
       <DataType>varchar|0s</DataType>
       <NotNull>1</NotNull>
-      <StateNumber>146706</StateNumber>
+      <StateNumber>151927</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="35" parent="30" name="expiry">
+    <column id="43" parent="34" name="expiry">
       <Position>3</Position>
       <DataType>date|0s</DataType>
       <NotNull>1</NotNull>
-      <StateNumber>146706</StateNumber>
+      <StateNumber>151927</StateNumber>
       <TypeId>1082</TypeId>
     </column>
-    <column id="36" parent="30" name="type">
+    <column id="44" parent="34" name="type">
       <Position>4</Position>
       <DataType>varchar|0s</DataType>
       <NotNull>1</NotNull>
-      <StateNumber>146706</StateNumber>
+      <StateNumber>151927</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="37" parent="30" name="strike">
+    <column id="45" parent="34" name="strike">
       <Position>5</Position>
       <DataType>integer|0s</DataType>
       <NotNull>1</NotNull>
-      <StateNumber>146706</StateNumber>
+      <StateNumber>151927</StateNumber>
       <TypeId>23</TypeId>
     </column>
-    <column id="38" parent="30" name="base">
+    <column id="46" parent="34" name="base">
       <Position>6</Position>
       <DataType>varchar|0s</DataType>
       <NotNull>1</NotNull>
-      <StateNumber>146706</StateNumber>
+      <StateNumber>151927</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="39" parent="30" name="theoreticalprice">
+    <column id="47" parent="34" name="theoreticalprice">
       <Position>7</Position>
       <DataType>double precision|0s</DataType>
       <NotNull>1</NotNull>
-      <StateNumber>146706</StateNumber>
+      <StateNumber>151927</StateNumber>
       <TypeId>701</TypeId>
     </column>
-    <column id="40" parent="30" name="pricehi">
+    <column id="48" parent="34" name="pricehi">
       <Position>8</Position>
       <DataType>double precision|0s</DataType>
       <NotNull>1</NotNull>
-      <StateNumber>146706</StateNumber>
+      <StateNumber>151927</StateNumber>
       <TypeId>701</TypeId>
     </column>
-    <column id="41" parent="30" name="pricelo">
+    <column id="49" parent="34" name="pricelo">
       <Position>9</Position>
       <DataType>double precision|0s</DataType>
       <NotNull>1</NotNull>
-      <StateNumber>146706</StateNumber>
+      <StateNumber>151927</StateNumber>
       <TypeId>701</TypeId>
     </column>
-    <column id="42" parent="30" name="numberofcontracts">
+    <column id="50" parent="34" name="numberofcontracts">
       <Position>10</Position>
       <DataType>integer|0s</DataType>
       <NotNull>1</NotNull>
-      <StateNumber>146706</StateNumber>
+      <StateNumber>151927</StateNumber>
       <TypeId>23</TypeId>
     </column>
-    <column id="43" parent="30" name="numberoftrades">
+    <column id="51" parent="34" name="numberoftrades">
       <Position>11</Position>
       <DataType>integer|0s</DataType>
       <NotNull>1</NotNull>
-      <StateNumber>146706</StateNumber>
+      <StateNumber>151927</StateNumber>
       <TypeId>23</TypeId>
     </column>
-    <column id="44" parent="30" name="volumetoday">
+    <column id="52" parent="34" name="volumetoday">
       <Position>12</Position>
       <DataType>integer|0s</DataType>
       <NotNull>1</NotNull>
-      <StateNumber>146706</StateNumber>
+      <StateNumber>151927</StateNumber>
       <TypeId>23</TypeId>
     </column>
-    <column id="45" parent="30" name="valuetoday">
+    <column id="53" parent="34" name="valuetoday">
       <Position>13</Position>
       <DataType>integer|0s</DataType>
       <NotNull>1</NotNull>
-      <StateNumber>146706</StateNumber>
+      <StateNumber>151927</StateNumber>
       <TypeId>23</TypeId>
     </column>
-    <index id="46" parent="30" name="now_pkey">
-      <ObjectId>24934</ObjectId>
-      <StateNumber>146706</StateNumber>
+    <index id="54" parent="34" name="now_pkey">
+      <ObjectId>24951</ObjectId>
+      <StateNumber>151927</StateNumber>
       <ColNames>code</ColNames>
       <Unique>1</Unique>
       <Primary>1</Primary>
@@ -1082,107 +1131,325 @@ UC/10
       <CollationNames>default</CollationNames>
       <ClassIds>3126</ClassIds>
     </index>
-    <key id="47" parent="30" name="now_pkey">
-      <ObjectId>24935</ObjectId>
-      <StateNumber>146706</StateNumber>
+    <key id="55" parent="34" name="now_pkey">
+      <ObjectId>24952</ObjectId>
+      <StateNumber>151927</StateNumber>
       <ColNames>code</ColNames>
       <Primary>1</Primary>
       <UnderlyingIndexName>now_pkey</UnderlyingIndexName>
     </key>
-    <column id="48" parent="31" name="date">
+    <column id="56" parent="35" name="date">
       <Position>1</Position>
       <DataType>date|0s</DataType>
       <NotNull>1</NotNull>
-      <StateNumber>146704</StateNumber>
+      <StateNumber>157176</StateNumber>
       <TypeId>1082</TypeId>
     </column>
-    <column id="49" parent="31" name="code">
+    <column id="57" parent="35" name="code">
       <Position>2</Position>
       <DataType>varchar|0s</DataType>
       <NotNull>1</NotNull>
-      <StateNumber>146704</StateNumber>
+      <StateNumber>157176</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="50" parent="31" name="expiry">
+    <column id="58" parent="35" name="base">
       <Position>3</Position>
-      <DataType>date|0s</DataType>
+      <DataType>varchar|0s</DataType>
       <NotNull>1</NotNull>
-      <StateNumber>146704</StateNumber>
-      <TypeId>1082</TypeId>
+      <StateNumber>157176</StateNumber>
+      <TypeId>1043</TypeId>
     </column>
-    <column id="51" parent="31" name="type">
+    <column id="59" parent="35" name="type">
       <Position>4</Position>
       <DataType>varchar|0s</DataType>
       <NotNull>1</NotNull>
-      <StateNumber>146704</StateNumber>
+      <StateNumber>157176</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="52" parent="31" name="strike">
+    <column id="60" parent="35" name="strike">
       <Position>5</Position>
       <DataType>integer|0s</DataType>
       <NotNull>1</NotNull>
-      <StateNumber>146704</StateNumber>
+      <StateNumber>157176</StateNumber>
       <TypeId>23</TypeId>
     </column>
-    <column id="53" parent="31" name="base">
+    <column id="61" parent="35" name="expiry">
       <Position>6</Position>
-      <DataType>varchar|0s</DataType>
+      <DataType>date|0s</DataType>
       <NotNull>1</NotNull>
-      <StateNumber>146704</StateNumber>
-      <TypeId>1043</TypeId>
+      <StateNumber>157176</StateNumber>
+      <TypeId>1082</TypeId>
     </column>
-    <column id="54" parent="31" name="theoreticalprice">
+    <column id="62" parent="35" name="changemoney">
       <Position>7</Position>
       <DataType>double precision|0s</DataType>
       <NotNull>1</NotNull>
-      <StateNumber>146704</StateNumber>
+      <StateNumber>157176</StateNumber>
       <TypeId>701</TypeId>
     </column>
-    <column id="55" parent="31" name="pricehi">
+    <column id="63" parent="35" name="level">
       <Position>8</Position>
       <DataType>double precision|0s</DataType>
       <NotNull>1</NotNull>
-      <StateNumber>146704</StateNumber>
+      <StateNumber>157176</StateNumber>
       <TypeId>701</TypeId>
     </column>
-    <column id="56" parent="31" name="pricelo">
+    <column id="64" parent="35" name="theoreticalprice">
       <Position>9</Position>
       <DataType>double precision|0s</DataType>
       <NotNull>1</NotNull>
-      <StateNumber>146704</StateNumber>
+      <StateNumber>157176</StateNumber>
       <TypeId>701</TypeId>
     </column>
-    <column id="57" parent="31" name="numberofcontracts">
+    <column id="65" parent="35" name="openinterest">
       <Position>10</Position>
-      <DataType>integer|0s</DataType>
+      <DataType>double precision|0s</DataType>
       <NotNull>1</NotNull>
-      <StateNumber>146704</StateNumber>
-      <TypeId>23</TypeId>
+      <StateNumber>157176</StateNumber>
+      <TypeId>701</TypeId>
     </column>
-    <column id="58" parent="31" name="numberoftrades">
+    <column id="66" parent="35" name="openinterestprevious">
       <Position>11</Position>
-      <DataType>integer|0s</DataType>
+      <DataType>double precision|0s</DataType>
       <NotNull>1</NotNull>
-      <StateNumber>146704</StateNumber>
-      <TypeId>23</TypeId>
+      <StateNumber>157176</StateNumber>
+      <TypeId>701</TypeId>
     </column>
-    <column id="59" parent="31" name="volumetoday">
+    <column id="67" parent="35" name="openinterestchange">
       <Position>12</Position>
-      <DataType>integer|0s</DataType>
+      <DataType>double precision|0s</DataType>
       <NotNull>1</NotNull>
-      <StateNumber>146704</StateNumber>
-      <TypeId>23</TypeId>
+      <StateNumber>157176</StateNumber>
+      <TypeId>701</TypeId>
     </column>
-    <column id="60" parent="31" name="valuetoday">
+    <column id="68" parent="35" name="id">
       <Position>13</Position>
       <DataType>integer|0s</DataType>
       <NotNull>1</NotNull>
-      <StateNumber>146704</StateNumber>
+      <StateNumber>157176</StateNumber>
+      <DefaultExpression>nextval(&apos;others_id_seq&apos;::regclass)</DefaultExpression>
       <TypeId>23</TypeId>
     </column>
-    <index id="61" parent="31" name="now_pkey1">
-      <ObjectId>24926</ObjectId>
-      <StateNumber>146704</StateNumber>
+    <index id="69" parent="35" name="others_pkey">
+      <ObjectId>25003</ObjectId>
+      <StateNumber>157176</StateNumber>
+      <ColNames>id</ColNames>
+      <Unique>1</Unique>
+      <Primary>1</Primary>
+      <AccessMethodId>403</AccessMethodId>
+      <CollationIds>0</CollationIds>
+      <ClassIds>1978</ClassIds>
+    </index>
+    <key id="70" parent="35" name="others_pkey">
+      <ObjectId>25004</ObjectId>
+      <StateNumber>157176</StateNumber>
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>others_pkey</UnderlyingIndexName>
+    </key>
+    <column id="71" parent="36" name="date">
+      <Position>1</Position>
+      <DataType>date|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157179</StateNumber>
+      <TypeId>1082</TypeId>
+    </column>
+    <column id="72" parent="36" name="code">
+      <Position>2</Position>
+      <DataType>varchar|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157179</StateNumber>
+      <TypeId>1043</TypeId>
+    </column>
+    <column id="73" parent="36" name="base">
+      <Position>3</Position>
+      <DataType>varchar|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157179</StateNumber>
+      <TypeId>1043</TypeId>
+    </column>
+    <column id="74" parent="36" name="type">
+      <Position>4</Position>
+      <DataType>varchar|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157179</StateNumber>
+      <TypeId>1043</TypeId>
+    </column>
+    <column id="75" parent="36" name="strike">
+      <Position>5</Position>
+      <DataType>integer|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157179</StateNumber>
+      <TypeId>23</TypeId>
+    </column>
+    <column id="76" parent="36" name="expiry">
+      <Position>6</Position>
+      <DataType>date|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157179</StateNumber>
+      <TypeId>1082</TypeId>
+    </column>
+    <column id="77" parent="36" name="changemoney">
+      <Position>7</Position>
+      <DataType>double precision|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157179</StateNumber>
+      <TypeId>701</TypeId>
+    </column>
+    <column id="78" parent="36" name="level">
+      <Position>8</Position>
+      <DataType>double precision|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157179</StateNumber>
+      <TypeId>701</TypeId>
+    </column>
+    <column id="79" parent="36" name="theoreticalprice">
+      <Position>9</Position>
+      <DataType>double precision|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157179</StateNumber>
+      <TypeId>701</TypeId>
+    </column>
+    <column id="80" parent="36" name="openinterest">
+      <Position>10</Position>
+      <DataType>double precision|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157179</StateNumber>
+      <TypeId>701</TypeId>
+    </column>
+    <column id="81" parent="36" name="openinterestprevious">
+      <Position>11</Position>
+      <DataType>double precision|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157179</StateNumber>
+      <TypeId>701</TypeId>
+    </column>
+    <column id="82" parent="36" name="openinterestchange">
+      <Position>12</Position>
+      <DataType>double precision|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157179</StateNumber>
+      <TypeId>701</TypeId>
+    </column>
+    <column id="83" parent="36" name="id">
+      <Position>13</Position>
+      <DataType>integer|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157179</StateNumber>
+      <DefaultExpression>nextval(&apos;othersday_id_seq&apos;::regclass)</DefaultExpression>
+      <TypeId>23</TypeId>
+    </column>
+    <index id="84" parent="36" name="othersday_pkey">
+      <ObjectId>25014</ObjectId>
+      <StateNumber>157179</StateNumber>
+      <ColNames>id</ColNames>
+      <Unique>1</Unique>
+      <Primary>1</Primary>
+      <AccessMethodId>403</AccessMethodId>
+      <CollationIds>0</CollationIds>
+      <ClassIds>1978</ClassIds>
+    </index>
+    <key id="85" parent="36" name="othersday_pkey">
+      <ObjectId>25015</ObjectId>
+      <StateNumber>157179</StateNumber>
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>othersday_pkey</UnderlyingIndexName>
+    </key>
+    <column id="86" parent="37" name="date">
+      <Position>1</Position>
+      <DataType>date|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>146712</StateNumber>
+      <TypeId>1082</TypeId>
+    </column>
+    <column id="87" parent="37" name="code">
+      <Position>2</Position>
+      <DataType>varchar|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>146712</StateNumber>
+      <TypeId>1043</TypeId>
+    </column>
+    <column id="88" parent="37" name="expiry">
+      <Position>3</Position>
+      <DataType>date|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>146712</StateNumber>
+      <TypeId>1082</TypeId>
+    </column>
+    <column id="89" parent="37" name="type">
+      <Position>4</Position>
+      <DataType>varchar|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>146712</StateNumber>
+      <TypeId>1043</TypeId>
+    </column>
+    <column id="90" parent="37" name="strike">
+      <Position>5</Position>
+      <DataType>integer|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>146712</StateNumber>
+      <TypeId>23</TypeId>
+    </column>
+    <column id="91" parent="37" name="base">
+      <Position>6</Position>
+      <DataType>varchar|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>146712</StateNumber>
+      <TypeId>1043</TypeId>
+    </column>
+    <column id="92" parent="37" name="theoreticalprice">
+      <Position>7</Position>
+      <DataType>double precision|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>146712</StateNumber>
+      <TypeId>701</TypeId>
+    </column>
+    <column id="93" parent="37" name="pricehi">
+      <Position>8</Position>
+      <DataType>double precision|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>146712</StateNumber>
+      <TypeId>701</TypeId>
+    </column>
+    <column id="94" parent="37" name="pricelo">
+      <Position>9</Position>
+      <DataType>double precision|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>146712</StateNumber>
+      <TypeId>701</TypeId>
+    </column>
+    <column id="95" parent="37" name="numberofcontracts">
+      <Position>10</Position>
+      <DataType>integer|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>146712</StateNumber>
+      <TypeId>23</TypeId>
+    </column>
+    <column id="96" parent="37" name="numberoftrades">
+      <Position>11</Position>
+      <DataType>integer|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>146712</StateNumber>
+      <TypeId>23</TypeId>
+    </column>
+    <column id="97" parent="37" name="volumetoday">
+      <Position>12</Position>
+      <DataType>integer|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>146712</StateNumber>
+      <TypeId>23</TypeId>
+    </column>
+    <column id="98" parent="37" name="valuetoday">
+      <Position>13</Position>
+      <DataType>integer|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>146712</StateNumber>
+      <TypeId>23</TypeId>
+    </column>
+    <index id="99" parent="37" name="now_pkey1">
+      <ObjectId>24943</ObjectId>
+      <StateNumber>146712</StateNumber>
       <ColNames>code</ColNames>
       <Unique>1</Unique>
       <Primary>1</Primary>
@@ -1191,105 +1458,105 @@ UC/10
       <CollationNames>default</CollationNames>
       <ClassIds>3126</ClassIds>
     </index>
-    <key id="62" parent="31" name="now_pkey1">
-      <ObjectId>24927</ObjectId>
-      <StateNumber>146704</StateNumber>
+    <key id="100" parent="37" name="now_pkey1">
+      <ObjectId>24944</ObjectId>
+      <StateNumber>146712</StateNumber>
       <ColNames>code</ColNames>
       <Primary>1</Primary>
       <UnderlyingIndexName>now_pkey1</UnderlyingIndexName>
     </key>
-    <column id="63" parent="32" name="date">
+    <column id="101" parent="38" name="date">
       <Position>1</Position>
       <DataType>date|0s</DataType>
       <NotNull>1</NotNull>
       <StateNumber>84098</StateNumber>
       <TypeId>1082</TypeId>
     </column>
-    <column id="64" parent="32" name="code">
+    <column id="102" parent="38" name="code">
       <Position>2</Position>
       <DataType>varchar|0s</DataType>
       <NotNull>1</NotNull>
       <StateNumber>84098</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="65" parent="32" name="expiry">
+    <column id="103" parent="38" name="expiry">
       <Position>3</Position>
       <DataType>date|0s</DataType>
       <NotNull>1</NotNull>
       <StateNumber>84098</StateNumber>
       <TypeId>1082</TypeId>
     </column>
-    <column id="66" parent="32" name="type">
+    <column id="104" parent="38" name="type">
       <Position>4</Position>
       <DataType>varchar|0s</DataType>
       <NotNull>1</NotNull>
       <StateNumber>84098</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="67" parent="32" name="strike">
+    <column id="105" parent="38" name="strike">
       <Position>5</Position>
       <DataType>integer|0s</DataType>
       <NotNull>1</NotNull>
       <StateNumber>84098</StateNumber>
       <TypeId>23</TypeId>
     </column>
-    <column id="68" parent="32" name="base">
+    <column id="106" parent="38" name="base">
       <Position>6</Position>
       <DataType>varchar|0s</DataType>
       <NotNull>1</NotNull>
       <StateNumber>84098</StateNumber>
       <TypeId>1043</TypeId>
     </column>
-    <column id="69" parent="32" name="theoreticalprice">
+    <column id="107" parent="38" name="theoreticalprice">
       <Position>7</Position>
       <DataType>double precision|0s</DataType>
       <NotNull>1</NotNull>
       <StateNumber>84098</StateNumber>
       <TypeId>701</TypeId>
     </column>
-    <column id="70" parent="32" name="pricehi">
+    <column id="108" parent="38" name="pricehi">
       <Position>8</Position>
       <DataType>double precision|0s</DataType>
       <NotNull>1</NotNull>
       <StateNumber>84098</StateNumber>
       <TypeId>701</TypeId>
     </column>
-    <column id="71" parent="32" name="pricelo">
+    <column id="109" parent="38" name="pricelo">
       <Position>9</Position>
       <DataType>double precision|0s</DataType>
       <NotNull>1</NotNull>
       <StateNumber>84098</StateNumber>
       <TypeId>701</TypeId>
     </column>
-    <column id="72" parent="32" name="numberofcontracts">
+    <column id="110" parent="38" name="numberofcontracts">
       <Position>10</Position>
       <DataType>integer|0s</DataType>
       <NotNull>1</NotNull>
       <StateNumber>84098</StateNumber>
       <TypeId>23</TypeId>
     </column>
-    <column id="73" parent="32" name="numberoftrades">
+    <column id="111" parent="38" name="numberoftrades">
       <Position>11</Position>
       <DataType>integer|0s</DataType>
       <NotNull>1</NotNull>
       <StateNumber>84098</StateNumber>
       <TypeId>23</TypeId>
     </column>
-    <column id="74" parent="32" name="volumetoday">
+    <column id="112" parent="38" name="volumetoday">
       <Position>12</Position>
       <DataType>integer|0s</DataType>
       <NotNull>1</NotNull>
       <StateNumber>84098</StateNumber>
       <TypeId>23</TypeId>
     </column>
-    <column id="75" parent="32" name="valuetoday">
+    <column id="113" parent="38" name="valuetoday">
       <Position>13</Position>
       <DataType>integer|0s</DataType>
       <NotNull>1</NotNull>
       <StateNumber>84098</StateNumber>
       <TypeId>23</TypeId>
     </column>
-    <index id="76" parent="32" name="previousday_pkey">
+    <index id="114" parent="38" name="previousday_pkey">
       <ObjectId>24812</ObjectId>
       <StateNumber>84098</StateNumber>
       <ColNames>code</ColNames>
@@ -1300,12 +1567,230 @@ UC/10
       <CollationNames>default</CollationNames>
       <ClassIds>3126</ClassIds>
     </index>
-    <key id="77" parent="32" name="previousday_pkey">
+    <key id="115" parent="38" name="previousday_pkey">
       <ObjectId>24813</ObjectId>
       <StateNumber>84098</StateNumber>
       <ColNames>code</ColNames>
       <Primary>1</Primary>
       <UnderlyingIndexName>previousday_pkey</UnderlyingIndexName>
+    </key>
+    <column id="116" parent="39" name="date">
+      <Position>1</Position>
+      <DataType>date|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157173</StateNumber>
+      <TypeId>1082</TypeId>
+    </column>
+    <column id="117" parent="39" name="code">
+      <Position>2</Position>
+      <DataType>varchar|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157173</StateNumber>
+      <TypeId>1043</TypeId>
+    </column>
+    <column id="118" parent="39" name="base">
+      <Position>3</Position>
+      <DataType>varchar|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157173</StateNumber>
+      <TypeId>1043</TypeId>
+    </column>
+    <column id="119" parent="39" name="type">
+      <Position>4</Position>
+      <DataType>varchar|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157173</StateNumber>
+      <TypeId>1043</TypeId>
+    </column>
+    <column id="120" parent="39" name="strike">
+      <Position>5</Position>
+      <DataType>integer|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157173</StateNumber>
+      <TypeId>23</TypeId>
+    </column>
+    <column id="121" parent="39" name="expiry">
+      <Position>6</Position>
+      <DataType>date|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157173</StateNumber>
+      <TypeId>1082</TypeId>
+    </column>
+    <column id="122" parent="39" name="changemoney">
+      <Position>7</Position>
+      <DataType>double precision|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157173</StateNumber>
+      <TypeId>701</TypeId>
+    </column>
+    <column id="123" parent="39" name="level">
+      <Position>8</Position>
+      <DataType>double precision|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157173</StateNumber>
+      <TypeId>701</TypeId>
+    </column>
+    <column id="124" parent="39" name="theoreticalprice">
+      <Position>9</Position>
+      <DataType>double precision|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157173</StateNumber>
+      <TypeId>701</TypeId>
+    </column>
+    <column id="125" parent="39" name="openinterest">
+      <Position>10</Position>
+      <DataType>double precision|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157173</StateNumber>
+      <TypeId>701</TypeId>
+    </column>
+    <column id="126" parent="39" name="openinterestprevious">
+      <Position>11</Position>
+      <DataType>double precision|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157173</StateNumber>
+      <TypeId>701</TypeId>
+    </column>
+    <column id="127" parent="39" name="openinterestchange">
+      <Position>12</Position>
+      <DataType>double precision|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157173</StateNumber>
+      <TypeId>701</TypeId>
+    </column>
+    <column id="128" parent="39" name="id">
+      <Position>13</Position>
+      <DataType>integer|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157173</StateNumber>
+      <DefaultExpression>nextval(&apos;ri_id_seq&apos;::regclass)</DefaultExpression>
+      <TypeId>23</TypeId>
+    </column>
+    <index id="129" parent="39" name="ri_pkey">
+      <ObjectId>24992</ObjectId>
+      <StateNumber>157173</StateNumber>
+      <ColNames>id</ColNames>
+      <Unique>1</Unique>
+      <Primary>1</Primary>
+      <AccessMethodId>403</AccessMethodId>
+      <CollationIds>0</CollationIds>
+      <ClassIds>1978</ClassIds>
+    </index>
+    <key id="130" parent="39" name="ri_pkey">
+      <ObjectId>24993</ObjectId>
+      <StateNumber>157173</StateNumber>
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>ri_pkey</UnderlyingIndexName>
+    </key>
+    <column id="131" parent="40" name="date">
+      <Position>1</Position>
+      <DataType>date|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157157</StateNumber>
+      <TypeId>1082</TypeId>
+    </column>
+    <column id="132" parent="40" name="code">
+      <Position>2</Position>
+      <DataType>varchar|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157157</StateNumber>
+      <TypeId>1043</TypeId>
+    </column>
+    <column id="133" parent="40" name="base">
+      <Position>3</Position>
+      <DataType>varchar|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157157</StateNumber>
+      <TypeId>1043</TypeId>
+    </column>
+    <column id="134" parent="40" name="type">
+      <Position>4</Position>
+      <DataType>varchar|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157157</StateNumber>
+      <TypeId>1043</TypeId>
+    </column>
+    <column id="135" parent="40" name="strike">
+      <Position>5</Position>
+      <DataType>integer|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157157</StateNumber>
+      <TypeId>23</TypeId>
+    </column>
+    <column id="136" parent="40" name="expiry">
+      <Position>6</Position>
+      <DataType>date|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157157</StateNumber>
+      <TypeId>1082</TypeId>
+    </column>
+    <column id="137" parent="40" name="changemoney">
+      <Position>7</Position>
+      <DataType>double precision|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157157</StateNumber>
+      <TypeId>701</TypeId>
+    </column>
+    <column id="138" parent="40" name="level">
+      <Position>8</Position>
+      <DataType>double precision|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157157</StateNumber>
+      <TypeId>701</TypeId>
+    </column>
+    <column id="139" parent="40" name="theoreticalprice">
+      <Position>9</Position>
+      <DataType>double precision|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157157</StateNumber>
+      <TypeId>701</TypeId>
+    </column>
+    <column id="140" parent="40" name="openinterest">
+      <Position>10</Position>
+      <DataType>double precision|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157157</StateNumber>
+      <TypeId>701</TypeId>
+    </column>
+    <column id="141" parent="40" name="openinterestprevious">
+      <Position>11</Position>
+      <DataType>double precision|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157157</StateNumber>
+      <TypeId>701</TypeId>
+    </column>
+    <column id="142" parent="40" name="openinterestchange">
+      <Position>12</Position>
+      <DataType>double precision|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157157</StateNumber>
+      <TypeId>701</TypeId>
+    </column>
+    <column id="143" parent="40" name="id">
+      <Position>13</Position>
+      <DataType>integer|0s</DataType>
+      <NotNull>1</NotNull>
+      <StateNumber>157157</StateNumber>
+      <DefaultExpression>nextval(&apos;riday_id_seq&apos;::regclass)</DefaultExpression>
+      <TypeId>23</TypeId>
+    </column>
+    <index id="144" parent="40" name="riday_pkey">
+      <ObjectId>24981</ObjectId>
+      <StateNumber>157157</StateNumber>
+      <ColNames>id</ColNames>
+      <Unique>1</Unique>
+      <Primary>1</Primary>
+      <AccessMethodId>403</AccessMethodId>
+      <CollationIds>0</CollationIds>
+      <ClassIds>1978</ClassIds>
+    </index>
+    <key id="145" parent="40" name="riday_pkey">
+      <ObjectId>24982</ObjectId>
+      <StateNumber>157157</StateNumber>
+      <ColNames>id</ColNames>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>riday_pkey</UnderlyingIndexName>
     </key>
   </database-model>
 </dataSource>
