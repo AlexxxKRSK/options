@@ -1,8 +1,10 @@
 import javax.swing.text.DateFormatter;
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -62,6 +64,27 @@ public class Option {
         valueToday = Double.parseDouble(ls.get(12).replace(',','.'));
     }
 
+    public void pushToDB(Connection conn) {
+        String sql = "INSERT INTO now VALUES (?,?,?,?,?, ?,?,?,?,?, ?,?,?) ON CONFLICT DO NOTHING;";
+        try (var statement = conn.prepareStatement(sql);){
+            statement.setDate(1, Date.valueOf(this.getDt()));
+            statement.setString(2, this.getCode());
+            statement.setDate(3, Date.valueOf(this.getExpiry()));
+            statement.setString(4, this.getType());
+            statement.setInt(5, this.getStrike());
+            statement.setString(6, this.getBase());
+            statement.setDouble(7, this.getTheoreticalPrice());
+            statement.setDouble(8, this.getPriceHi());
+            statement.setDouble(9, this.getPriceLo());
+            statement.setInt(10, this.getNumberOfContracts());
+            statement.setInt(11, this.getNumberOfTrades());
+            statement.setInt(12, this.getVolumeToday());
+            statement.setDouble(13, this.getValueToday());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
     public void setCode(String code) {
         this.code = code;
     }

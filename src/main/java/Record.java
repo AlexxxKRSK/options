@@ -1,5 +1,4 @@
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -91,6 +90,29 @@ public class Record {
 
         openInterestPrevious = rs.getDouble(11);
         openInterestChange = rs.getDouble(12);
+    }
+
+    public void pushToDB(Connection conn, String table) {
+        String sql = "INSERT INTO "+ table + " VALUES (?,?,?,?,?, ?,?,?,?,?, ?,?) ON CONFLICT DO NOTHING;";
+        try (var statement = conn.prepareStatement(sql)){
+            statement.setDate(1, Date.valueOf(this.getDate()));
+            statement.setString(2, this.getCode());
+            statement.setString(3, this.getBase());
+            statement.setString(4, this.getType());
+            statement.setInt(5, this.getStrike());
+
+            statement.setDate(6, Date.valueOf(this.getExpiry()));
+            statement.setDouble(7, this.getMoneyChange());
+            statement.setDouble(8, this.getLevel());
+            statement.setDouble(9, this.getTheoreticalPrice());
+            statement.setDouble(10, this.getOpenInterest());
+
+            statement.setDouble(11, this.getOpenInterestPrevious());
+            statement.setDouble(12, this.getOpenInterestChange());
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public LocalDate getDate() {

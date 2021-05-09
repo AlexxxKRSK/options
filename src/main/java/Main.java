@@ -3,17 +3,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Main {
     static List<Option> now = new ArrayList<>();
-    static List<Option> previous = new ArrayList<>();
-    static List<Option> previousDay = new ArrayList<>();
+    static List<Option> previous = null;
+    static List<Option> previousDay =null;
     static List<Record> ri = new ArrayList<>();
     static List<Record> riDay = new ArrayList<>();
     static List<Record> others = new ArrayList<>();
@@ -23,8 +20,8 @@ public class Main {
     static String user;
     static String sourceFolder;
     static Path folder;
-    static Path file;
-    static FileTime fileTime = FileTime.fromMillis(0);
+    static Path lastFile;
+    static FileTime lastFileTime = FileTime.fromMillis(0);
     static String newTableNow;
 
     static {
@@ -35,142 +32,107 @@ public class Main {
         newTableNow = rb.getString("newTableNow");
         sourceFolder = rb.getString("sourceFolder");
         folder = Path.of(sourceFolder);
-        file = Path.of(sourceFolder);
+        lastFile = Path.of(rb.getString("lastFile"));
     }
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, IOException {
         while (true) {
 //          Get entry<fileTimeUpdate:fileName> for most fresh file
-            var dt = getLatestFile(folder);
-//          On new update start analyzing
-            if(dt.getKey().toMillis()>fileTime.toMillis() ) {
-                fileTime = dt.getKey();
-                System.out.println(dt.getKey() + "  ***  " + dt.getValue());
-//                readFile(file);
-//                updateDB("DROP TABLE IF EXISTS previous;" +
-//                        "CREATE TABLE previous AS TABLE now;");
-//                writeDB(now, "now");
-                checkDB(ri, others);
-                others.forEach(System.out::println);
-//                readDB("SELECT COUNT(*) FROM now");
+            var fileHelper = new FileHelper();
+            var latestFile = fileHelper.getLatestFile(folder);
+//          On new update start analyzing, check file size as well
+            if(latestFile.getKey().toMillis()> lastFileTime.toMillis() && Files.size(latestFile.getValue())>200_000) {
+                System.out.println(latestFile.getKey() + "  ***  " + latestFile.getValue());
+                previous = new ArrayList<>(now);
+//              Read new file to 'now' ArrayList
+                fileHelper.readFile(latestFile.getValue(), now);
 
-//                If new file created
-//                if(!dt.getValue().equals(file) & !dt.getValue().toString().equals(sourceFolder)){
-//                    file = dt.getValue();
-//                    System.out.println("New File found=" + file);
-//                    previousDay=new ArrayList<>(previous);
-//                    writeDB(previousDay,"previousDay");
-//                }
+                boolean newFile = !latestFile.getValue().equals(lastFile) & !latestFile.getValue().toString().equals(sourceFolder);
 
+                try (Connection conn = DriverManager.getConnection(url, user, pass)){
+                    conn.setAutoCommit(false);
+//                  Write 'now' to DB
+                    String pushNowIntoPrevious = "DROP TABLE IF EXISTS previous;" +
+                                                "CREATE TABLE previous AS TABLE now;" +
+                                                "TRUNCATE now;";
+                    var statement = conn.prepareStatement(pushNowIntoPrevious);
+                    statement.executeUpdate();
+                    System.out.println(62);
+                    now.forEach(o-> o.pushToDB(conn));
+                    conn.commit();
+
+//              Check for new deals greater 1 mln
+//                  Clear 'ri' and 'others' lists
+                    ri.clear();
+                    others.clear();
+//                  Select new deals greater then 1 mln RUB and insert into "ri" and "others" tables
+                    String check = "SELECT now.date, code, now.base, now.type, now.strike, now.expiry, " +
+                            "(now.open_interest-previous.open_interest)*now.theoretical_price/1000000 as money_change, " +
+                            "CASE WHEN now.type = 'Call' THEN (now.strike + now.theoretical_price) ELSE (now.strike - now.theoretical_price) END as level," +
+                            " now.theoretical_price, now.open_interest as oiNow, previous.open_interest as oi_prev, " +
+                            "(now.open_interest - previous.open_interest)/ now.open_interest*100 as oi_change " +
+                            "FROM now JOIN previous USING (code) WHERE (now.open_interest!=previous.open_interest) " +
+                            "AND (now.open_interest-previous.open_interest)*now.theoretical_price/1000000 NOT BETWEEN -1 AND 1;";
+                    statement = conn.prepareStatement(check);
+                    var rs = statement.executeQuery();
+                    while (rs.next()){
+                        if (rs.getString("code").startsWith("RI"))
+                            ri.add(new Record(rs));
+                        else others.add(new Record(rs));
+                    }
+                    ri.forEach(x -> System.out.println("RI=" + x));
+                    others.forEach(x -> System.out.println("Other=" + x));
+
+                    ri.forEach(r->r.pushToDB(conn,"ri"));
+                    others.forEach(r->r.pushToDB(conn, "others"));
+                    conn.commit();
+                    System.out.println(91);
+
+//              On new file found
+                    if(newFile){
+                        System.out.println("New File found=" + latestFile.getValue());
+
+//                      Clear 'riDay' and 'othersDay' lists
+                        riDay.clear();
+                        othersDay.clear();
+//                      Select new deals greater then 10 mln RUB and insert into "riDay" and "othersDay" tables
+                        String checkDay = "SELECT now.date, code, now.base, now.type, now.strike, now.expiry, " +
+                                "(now.open_interest-previous_day.open_interest)*now.theoretical_price/1000000 as money_change, " +
+                                "CASE WHEN now.type = 'Call' THEN (now.strike + now.theoretical_price) ELSE (now.strike - now.theoretical_price) END as level," +
+                                " now.theoretical_price, now.open_interest as oiNow, previous_day.open_interest as oi_prev, " +
+                                "(now.open_interest - previous_day.open_interest)/ now.open_interest*100 as oi_change " +
+                                "FROM now JOIN previous_day USING (code) WHERE (now.open_interest!=previous_day.open_interest) " +
+                                "AND (now.open_interest-previous_day.open_interest)*now.theoretical_price/1000000 NOT BETWEEN -10 AND 10;";
+                        statement = conn.prepareStatement(checkDay);
+                        rs = statement.executeQuery();
+                        while (rs.next()){
+                            if (rs.getString("code").startsWith("RI"))
+                                riDay.add(new Record(rs));
+                            else othersDay.add(new Record(rs));
+                        }
+                        riDay.forEach(x -> System.out.println("riDay=" + x));
+                        othersDay.forEach(x -> System.out.println("otherDay=" + x));
+
+                        riDay.forEach(r->r.pushToDB(conn, "ri_day"));
+                        othersDay.forEach(r->r.pushToDB(conn, "others_day"));
+
+                        previousDay=new ArrayList<>(previous);
+                        String pushPreviousIntoPreviousDay = "DROP TABLE IF EXISTS previous_day;" +
+                                            "CREATE TABLE previous_day AS TABLE previous;";
+                        statement = conn.prepareStatement(pushPreviousIntoPreviousDay);
+                        statement.executeUpdate();
+                        conn.commit();
+                }
+
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+//              Update 'lastFile' and 'lastFileTime' with new values
+                lastFile = latestFile.getValue();
+                lastFileTime = latestFile.getKey();
             }
             Thread.sleep(5000);
         }
     }
 
-    private static FileTime getFileTime(Path p) {
-        try {
-            return Files.getLastModifiedTime(p);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public static Map.Entry<FileTime, Path> getLatestFile(Path source){
-        try (Stream<Path> s = Files.walk(source)) {
-            return s
-                    .filter(Files::isRegularFile)
-                    .collect(Collectors.toMap(Main::getFileTime, v->v))
-                    .entrySet().stream()
-                    .reduce((e1,e2)-> e1.getKey().toMillis()>e2.getKey().toMillis()?e1:e2).get();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    static void readDB(String sql) {
-        try (Connection conn = DriverManager.getConnection(url, user, pass)){
-            var statement = conn.prepareStatement(sql);
-            var rs = statement.executeQuery();
-            while (rs.next())
-                System.out.println(rs.getString(1));
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    static void checkDB(List<Record> riList, List<Record> othersList) {
-        riList.clear();
-        othersList.clear();
-//        Select new deals greater then 1 mln RUB and insert into "ri" table
-        String sql = "SELECT now.date, code, now.base, now.type, now.strike, now.expiry, " +
-                "(now.numberofcontracts-previous.numberofcontracts)*now.theoreticalprice/1000000 as prcntChange, " +
-                "CASE WHEN now.type = 'Call' THEN (now.strike + now.theoreticalPrice) ELSE (now.strike - now.theoreticalPrice) END as level," +
-                " now.theoreticalPrice, now.numberofcontracts as oiNow, previous.numberofcontracts as oiPrev, " +
-                "(now.numberofcontracts - previous.numberofcontracts)/ now.numberofcontracts*100 as oiChange " +
-                "FROM now JOIN previous USING (code) WHERE (now.numberofcontracts!=previous.numberofcontracts) " +
-                "AND (now.numberofcontracts-previous.numberofcontracts)*now.theoreticalprice/1000000>=1;";
-
-        try (Connection conn = DriverManager.getConnection(url, user, pass)){
-            var statement = conn.prepareStatement(sql);
-            var rs = statement.executeQuery();
-            while (rs.next()){
-                if (rs.getString("code").startsWith("RI"))
-                    riList.add(new Record(rs));
-                else othersList.add(new Record(rs));
-           }
-            riList.forEach(x -> System.out.println("RI=" + x));
-            othersList.forEach(x -> System.out.println("Other=" + x));
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    static void updateDB(String sql) {
-        try (Connection conn = DriverManager.getConnection(url, user, pass)){
-            var statement = conn.prepareStatement(sql);
-            var rs = statement.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    static void writeDB(List<Option> list, String table) {
-        try (Connection conn = DriverManager.getConnection(url, user, pass)){
-            String sql = "TRUNCATE " + table + ";" +
-                    "INSERT INTO " + table + " VALUES (?,?,?,?,?, ?,?,?,?,?, ?,?,?) ON CONFLICT DO NOTHING";
-            for (Option opt: list){
-                var statement = conn.prepareStatement(sql);
-                statement.setDate(1, Date.valueOf(opt.getDt()));
-                statement.setString(2, opt.getCode());
-                statement.setDate(3, Date.valueOf(opt.getExpiry()));
-                statement.setString(4, opt.getType());
-                statement.setInt(5, opt.getStrike());
-                statement.setString(6, opt.getBase());
-                statement.setDouble(7, opt.getTheoreticalPrice());
-                statement.setDouble(8, opt.getPriceHi());
-                statement.setDouble(9, opt.getPriceLo());
-                statement.setInt(10, opt.getNumberOfContracts());
-                statement.setInt(11, opt.getNumberOfTrades());
-                statement.setInt(12, opt.getVolumeToday());
-                statement.setDouble(13, opt.getValueToday());
-                statement.executeUpdate();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    static void readFile(Path path){
-        now.clear();
-        try (var stream = Files.lines(path)) {
-            stream.skip(1)
-//                    .limit(100)
-                    .map(s-> Arrays.asList(s.split(";")))
-                    .forEach(l->now.add(new Option(l)));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 }
