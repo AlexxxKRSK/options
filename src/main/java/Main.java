@@ -52,13 +52,14 @@ public class Main {
                 try (Connection conn = DriverManager.getConnection(url, user, pass)){
                     conn.setAutoCommit(false);
 //                  Write 'now' to DB
-                    String pushNowIntoPrevious = "DROP TABLE IF EXISTS previous;" +
-                                                "CREATE TABLE previous AS TABLE now;" +
-                                                "TRUNCATE now;";
+                    String pushNowIntoPrevious =
+                                    "DROP TABLE IF EXISTS previous; " +
+                                    "CREATE TABLE previous AS TABLE now; " +
+                                    "TRUNCATE now;";
                     var statement = conn.prepareStatement(pushNowIntoPrevious);
                     statement.executeUpdate();
-                    System.out.println(62);
-                    now.forEach(o-> o.pushToDB(conn));
+                    System.out.println(60);
+                    now.parallelStream().forEach(o-> o.pushToDB(conn));
                     conn.commit();
 
 //              Check for new deals greater 1 mln
@@ -66,13 +67,14 @@ public class Main {
                     ri.clear();
                     others.clear();
 //                  Select new deals greater then 1 mln RUB and insert into "ri" and "others" tables
-                    String check = "SELECT now.date, code, now.base, now.type, now.strike, now.expiry, " +
+                    String check =
+                            "SELECT now.date, code, now.base, now.type, now.strike, now.expiry, " +
                             "(now.open_interest-previous.open_interest)*now.theoretical_price/1000000 as money_change, " +
                             "CASE WHEN now.type = 'Call' THEN (now.strike + now.theoretical_price) ELSE (now.strike - now.theoretical_price) END as level," +
                             " now.theoretical_price, now.open_interest as oiNow, previous.open_interest as oi_prev, " +
                             "(now.open_interest - previous.open_interest)/ now.open_interest*100 as oi_change " +
                             "FROM now JOIN previous USING (code) WHERE (now.open_interest!=previous.open_interest) " +
-                            "AND (now.open_interest-previous.open_interest)*now.theoretical_price/1000000 NOT BETWEEN -1 AND 1;";
+                            "AND ((now.open_interest-previous.open_interest)*now.theoretical_price/1000000) NOT BETWEEN -1 AND 1;";
                     statement = conn.prepareStatement(check);
                     var rs = statement.executeQuery();
                     while (rs.next()){
@@ -86,7 +88,7 @@ public class Main {
                     ri.forEach(r->r.pushToDB(conn,"ri"));
                     others.forEach(r->r.pushToDB(conn, "others"));
                     conn.commit();
-                    System.out.println(91);
+                    System.out.println(89);
 
 //              On new file found
                     if(newFile){
@@ -96,13 +98,14 @@ public class Main {
                         riDay.clear();
                         othersDay.clear();
 //                      Select new deals greater then 10 mln RUB and insert into "riDay" and "othersDay" tables
-                        String checkDay = "SELECT now.date, code, now.base, now.type, now.strike, now.expiry, " +
+                        String checkDay =
+                                "SELECT now.date, code, now.base, now.type, now.strike, now.expiry, " +
                                 "(now.open_interest-previous_day.open_interest)*now.theoretical_price/1000000 as money_change, " +
                                 "CASE WHEN now.type = 'Call' THEN (now.strike + now.theoretical_price) ELSE (now.strike - now.theoretical_price) END as level," +
                                 " now.theoretical_price, now.open_interest as oiNow, previous_day.open_interest as oi_prev, " +
                                 "(now.open_interest - previous_day.open_interest)/ now.open_interest*100 as oi_change " +
                                 "FROM now JOIN previous_day USING (code) WHERE (now.open_interest!=previous_day.open_interest) " +
-                                "AND (now.open_interest-previous_day.open_interest)*now.theoretical_price/1000000 NOT BETWEEN -10 AND 10;";
+                                "AND ABS((now.open_interest-previous_day.open_interest)*now.theoretical_price/1000000)>10;";
                         statement = conn.prepareStatement(checkDay);
                         rs = statement.executeQuery();
                         while (rs.next()){
@@ -117,9 +120,16 @@ public class Main {
                         othersDay.forEach(r->r.pushToDB(conn, "others_day"));
 
                         previousDay=new ArrayList<>(previous);
-                        String pushPreviousIntoPreviousDay = "DROP TABLE IF EXISTS previous_day;" +
-                                            "CREATE TABLE previous_day AS TABLE previous;";
-                        statement = conn.prepareStatement(pushPreviousIntoPreviousDay);
+                        String onNewFile =
+                                "TRUNCATE ri; " +
+                                "TRUNCATE others;" +
+                                "DROP TABLE IF EXISTS previous_day;" +
+                                "CREATE TABLE previous_day AS TABLE previous;" +
+                                "WITH delta AS (DELETE FROM ri WHERE expiry < NOW() RETURNING *)," +
+                                "delta1 AS (DELETE FROM others WHERE expiry < NOW() RETURNING *) " +
+                                "INSERT INTO archive_day " +
+                                "SELECT * FROM delta UNION ALL SELECT * FROM delta1;";
+                        statement = conn.prepareStatement(onNewFile);
                         statement.executeUpdate();
                         conn.commit();
                 }
