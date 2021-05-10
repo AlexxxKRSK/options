@@ -125,10 +125,12 @@ public class Main {
                                 "TRUNCATE others;" +
                                 "DROP TABLE IF EXISTS previous_day;" +
                                 "CREATE TABLE previous_day AS TABLE previous;" +
-                                "WITH delta AS (DELETE FROM ri WHERE expiry < NOW() RETURNING *)," +
-                                "delta1 AS (DELETE FROM others WHERE expiry < NOW() RETURNING *) " +
-                                "INSERT INTO archive_day " +
-                                "SELECT * FROM delta UNION ALL SELECT * FROM delta1;";
+                                "WITH to_archive_ri AS (DELETE FROM ri_day WHERE expiry < NOW() RETURNING *)" +
+                                "INSERT INTO archive_ri " +
+                                "SELECT * FROM to_archive_ri;" +
+                                "WITH to_archive_others AS (DELETE FROM others_day WHERE expiry < NOW() RETURNING *)" +
+                                "INSERT INTO archive_others " +
+                                "SELECT * FROM to_archive_others;";
                         statement = conn.prepareStatement(onNewFile);
                         statement.executeUpdate();
                         conn.commit();
