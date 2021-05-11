@@ -20,7 +20,7 @@ public class FileHelper {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println(ls.size());
+//        System.out.println(ls.size());
     }
 
     public Map.Entry<FileTime, Path> getLatestFile(Path source){

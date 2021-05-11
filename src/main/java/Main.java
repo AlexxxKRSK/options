@@ -1,7 +1,5 @@
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.attribute.FileTime;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -15,41 +13,20 @@ public class Main {
     static List<Record> riDay = new ArrayList<>();
     static List<Record> others = new ArrayList<>();
     static List<Record> othersDay = new ArrayList<>();
-    static String url;
-    static String pass;
-    static String user;
-    static String sourceFolder;
-    static Path folder;
-    static Path lastFile;
-    static FileTime lastFileTime = FileTime.fromMillis(0);
-    static String newTableNow;
-
-    static {
-        var rb = ResourceBundle.getBundle("Properties");
-        url = rb.getString("url");
-        pass = rb.getString("pass");
-        user = rb.getString("user");
-        newTableNow = rb.getString("newTableNow");
-        sourceFolder = rb.getString("sourceFolder");
-        folder = Path.of(sourceFolder);
-        lastFile = Path.of(rb.getString("lastFile"));
-    }
 
     public static void main(String[] args) throws InterruptedException, IOException {
+        Props props = Props.getProps();
         while (true) {
 //          Get entry<fileTimeUpdate:fileName> for most fresh file
             var fileHelper = new FileHelper();
-            var latestFile = fileHelper.getLatestFile(folder);
+            var latestFile = fileHelper.getLatestFile(props.getSourceFolder());
 //          On new update start analyzing, check file size as well
-            if(latestFile.getKey().toMillis()> lastFileTime.toMillis() && Files.size(latestFile.getValue())>200_000) {
+            if(latestFile.getKey().toMillis()> props.getLastFileTime().toMillis() && Files.size(latestFile.getValue())>200_000) {
                 System.out.println(latestFile.getKey() + "  ***  " + latestFile.getValue());
                 previous = new ArrayList<>(now);
 //              Read new file to 'now' ArrayList
                 fileHelper.readFile(latestFile.getValue(), now);
-
-                boolean newFile = !latestFile.getValue().equals(lastFile) & !latestFile.getValue().toString().equals(sourceFolder);
-
-                try (Connection conn = DriverManager.getConnection(url, user, pass)){
+                try (Connection conn = DriverManager.getConnection(props.getUrl(), props.getUser(), props.getPass())){
                     conn.setAutoCommit(false);
 //                  Write 'now' to DB
                     String pushNowIntoPrevious =
@@ -58,11 +35,9 @@ public class Main {
                                     "TRUNCATE now;";
                     var statement = conn.prepareStatement(pushNowIntoPrevious);
                     statement.executeUpdate();
-                    System.out.println(60);
                     now.parallelStream().forEach(o-> o.pushToDB(conn));
                     conn.commit();
-
-//              Check for new deals greater 1 mln
+//      Check for new deals greater 1 mln
 //                  Clear 'ri' and 'others' lists
                     ri.clear();
                     others.clear();
@@ -88,12 +63,9 @@ public class Main {
                     ri.forEach(r->r.pushToDB(conn,"ri"));
                     others.forEach(r->r.pushToDB(conn, "others"));
                     conn.commit();
-                    System.out.println(89);
-
-//              On new file found
-                    if(newFile){
+//      On new file found
+                    if(!Files.isSameFile(latestFile.getValue(),props.getLastFile())){
                         System.out.println("New File found=" + latestFile.getValue());
-
 //                      Clear 'riDay' and 'othersDay' lists
                         riDay.clear();
                         othersDay.clear();
@@ -140,8 +112,7 @@ public class Main {
                     e.printStackTrace();
                 }
 //              Update 'lastFile' and 'lastFileTime' with new values
-                lastFile = latestFile.getValue();
-                lastFileTime = latestFile.getKey();
+                props.setLastFile(latestFile.getValue());
             }
             Thread.sleep(5000);
         }

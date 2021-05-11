@@ -37,10 +37,7 @@ public class Record {
     Double openInterestPrevious;
     Double openInterestChange;
 
-    public Record() {
-    }
-
-    public Record(List<String> ls) {
+   public Record(List<String> ls) {
         date = LocalDate.parse(ls.get(0), DateTimeFormatter.ofPattern("yyyyMMdd"));
         code = ls.get(1);
         base = ls.get(5);
@@ -119,16 +116,8 @@ public class Record {
         return date;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
     public String getCode() {
         return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
     }
 
     public String getBase() {
@@ -167,47 +156,23 @@ public class Record {
         return moneyChange;
     }
 
-    public void setMoneyChange(Double moneyChange) {
-        this.moneyChange = moneyChange;
-    }
-
-    public Double getLevel() {
+       public Double getLevel() {
         return level;
-    }
-
-    public void setLevel(Double level) {
-        this.level = level;
     }
 
     public Double getTheoreticalPrice() {
         return theoreticalPrice;
     }
 
-    public void setTheoreticalPrice(Double theoreticalPrice) {
-        this.theoreticalPrice = theoreticalPrice;
-    }
-
     public Double getOpenInterest() {
         return openInterest;
-    }
-
-    public void setOpenInterest(Double openInterest) {
-        this.openInterest = openInterest;
     }
 
     public Double getOpenInterestPrevious() {
         return openInterestPrevious;
     }
 
-    public void setOpenInterestPrevious(Double openInterestPrevious) {
-        this.openInterestPrevious = openInterestPrevious;
-    }
-
     public Double getOpenInterestChange() {
         return openInterestChange;
-    }
-
-    public void setOpenInterestChange(Double openInterestChange) {
-        this.openInterestChange = openInterestChange;
     }
 }
