@@ -25,7 +25,7 @@ public class Main {
             Map.Entry<FileTime,Path> latestFile = fileHelper.getLatestFile(props.getSourceFolder());
 //          On new update start analyzing, check file size as well
             if(latestFile.getKey().toMillis()> props.getLastFileTime().toMillis() && Files.size(latestFile.getValue())>200_000) {
-                System.out.println(new SimpleDateFormat("dd-MM-YYYY hh:mm").format(latestFile.getKey()) + "  ***  "
+                System.out.println(new SimpleDateFormat("dd-MM-YYYY hh:mm").format(latestFile.getKey().toMillis()) + "  ***  "
                         + latestFile.getValue().getFileName());
                 previous = new ArrayList<>(now);
 //              Read new file to 'now' ArrayList
@@ -75,7 +75,7 @@ public class Main {
                         othersDay.clear();
 //                      Select new deals greater then 10 mln RUB and insert into "riDay" and "othersDay" tables
                         String checkDay =
-                                "SELECT now.date, code, now.base, now.type, now.strike, now.expiry, " +
+                                "SELECT now.time, code, now.base, now.type, now.strike, now.expiry, " +
                                 "(now.open_interest-previous_day.open_interest)*now.theoretical_price/1000000 as money_change, " +
                                 "CASE WHEN now.type = 'Call' THEN (now.strike + now.theoretical_price) ELSE (now.strike - now.theoretical_price) END as level," +
                                 " now.theoretical_price, now.open_interest as oiNow, previous_day.open_interest as oi_prev, " +

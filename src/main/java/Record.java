@@ -1,7 +1,6 @@
 import java.sql.*;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
+import java.time.LocalDateTime;
 
 /**
  * Class for new update record
@@ -22,7 +21,7 @@ public class Record {
 //    openInterestPrevious double precision NOT NULL,
 //    openInterestChange double precision NOT NULL,
 
-    LocalDate date;
+    LocalDateTime time;
     String code;
     String base;
     String type;
@@ -37,22 +36,6 @@ public class Record {
     Double openInterestPrevious;
     Double openInterestChange;
 
-   public Record(List<String> ls) {
-        date = LocalDate.parse(ls.get(0), DateTimeFormatter.ofPattern("yyyyMMdd"));
-        code = ls.get(1);
-        base = ls.get(5);
-        type= ls.get(3);
-        strike = Integer.parseInt(ls.get(4));
-
-        expiry = LocalDate.parse(ls.get(2), DateTimeFormatter.ofPattern("yyyyMMdd"));
-        moneyChange = Double.parseDouble(ls.get(6).replace(',','.'));
-        level = Double.parseDouble(ls.get(7).replace(',','.'));
-        theoreticalPrice =Double.parseDouble(ls.get(8).replace(',','.'));
-        openInterest = Double.parseDouble(ls.get(9));
-
-        openInterestPrevious = Double.parseDouble(ls.get(12).replace(',','.'));
-        openInterestChange = Double.parseDouble(ls.get(12).replace(',','.'));
-    }
 
     @Override
     public String toString() {
@@ -69,7 +52,7 @@ public class Record {
     }
 
     public Record(ResultSet rs) throws SQLException {
-        date = rs.getDate(1).toLocalDate();
+        time = LocalDateTime.now();
         code = rs.getString(2);
         base = rs.getString(3);
         type= rs.getString(4);
@@ -88,7 +71,7 @@ public class Record {
     public void pushToDB(Connection conn, String table) {
         String sql = "INSERT INTO "+ table + " VALUES (?,?,?,?,?, ?,?,?,?,?, ?,?) ON CONFLICT DO NOTHING;";
         try (PreparedStatement statement = conn.prepareStatement(sql)){
-            statement.setDate(1, Date.valueOf(this.getDate()));
+            statement.setObject(1,this.getTime());
             statement.setString(2, this.getCode());
             statement.setString(3, this.getBase());
             statement.setString(4, this.getType());
@@ -108,8 +91,8 @@ public class Record {
         }
     }
 
-    public LocalDate getDate() {
-        return date;
+    public LocalDateTime getTime() {
+        return time;
     }
 
     public String getCode() {
