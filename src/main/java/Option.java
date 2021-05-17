@@ -1,5 +1,6 @@
 import java.sql.Connection;
 import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -64,7 +65,7 @@ public class Option {
 
     public void pushToDB(Connection conn) {
         String sql = "INSERT INTO now VALUES (?,?,?,?,?, ?,?,?,?,?, ?,?,?) ON CONFLICT DO NOTHING;";
-        try (var statement = conn.prepareStatement(sql);){
+        try (PreparedStatement statement = conn.prepareStatement(sql);){
             statement.setDate(1, Date.valueOf(this.getDt()));
             statement.setString(2, this.getCode());
             statement.setDate(3, Date.valueOf(this.getExpiry()));
@@ -81,6 +82,7 @@ public class Option {
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+            Logger.getLogger().logIt(e);
         }
     }
     public void setCode(String code) {

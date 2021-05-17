@@ -12,13 +12,14 @@ public class FileHelper {
 
       public void readFile(Path path, List<Option> ls) {
         ls.clear();
-        try (var stream = Files.lines(path)) {
+        try (Stream<String> stream = Files.lines(path)) {
             stream.skip(1)
 //                    .limit(100)
                     .map(s -> Arrays.asList(s.split(";")))
                     .forEach(l -> ls.add(new Option(l)));
         } catch (IOException e) {
             e.printStackTrace();
+            Logger.getLogger().logIt(e);
         }
 //        System.out.println(ls.size());
     }
@@ -27,11 +28,13 @@ public class FileHelper {
         try (Stream<Path> s = Files.walk(source)) {
             return s
                     .filter(Files::isRegularFile)
+                    .filter(p->p.toString().toLowerCase().endsWith(".csv"))
                     .collect(Collectors.toMap(FileHelper::getFileTime, v->v))
                     .entrySet().stream()
                     .reduce((e1,e2)-> e1.getKey().toMillis()>e2.getKey().toMillis()?e1:e2).get();
         } catch (IOException e) {
             e.printStackTrace();
+            Logger.getLogger().logIt(e);
         }
         return null;
     }
@@ -41,6 +44,7 @@ public class FileHelper {
             return Files.getLastModifiedTime(p);
         } catch (IOException e) {
             e.printStackTrace();
+            Logger.getLogger().logIt(e);
         }
         return null;
     }

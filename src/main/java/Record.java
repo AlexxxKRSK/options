@@ -57,17 +57,13 @@ public class Record {
     @Override
     public String toString() {
         return "Record{" +
-                "date=" + date +
-                ", code='" + code + '\'' +
-                ", base='" + base + '\'' +
-                ", type='" + type + '\'' +
-                ", strike=" + strike +
+                " code=" + code +
                 ", expiry=" + expiry +
+                ", base=" + base +
+                ", type=" + type +
+                ", strike=" + strike +
                 ", moneyChange=" + moneyChange +
                 ", level=" + level +
-                ", theoreticalPrice=" + theoreticalPrice +
-                ", openInterest=" + openInterest +
-                ", openInterestPrevious=" + openInterestPrevious +
                 ", openInterestChange=" + openInterestChange +
                 '}';
     }
@@ -91,7 +87,7 @@ public class Record {
 
     public void pushToDB(Connection conn, String table) {
         String sql = "INSERT INTO "+ table + " VALUES (?,?,?,?,?, ?,?,?,?,?, ?,?) ON CONFLICT DO NOTHING;";
-        try (var statement = conn.prepareStatement(sql)){
+        try (PreparedStatement statement = conn.prepareStatement(sql)){
             statement.setDate(1, Date.valueOf(this.getDate()));
             statement.setString(2, this.getCode());
             statement.setString(3, this.getBase());

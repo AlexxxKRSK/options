@@ -1,9 +1,12 @@
 import java.io.IOException;
 import java.nio.file.Files;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.*;
+import java.nio.file.Path;
+import java.nio.file.attribute.FileTime;
+import java.sql.*;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class Main {
     static List<Option> now = new ArrayList<>();
@@ -16,13 +19,14 @@ public class Main {
 
     public static void main(String[] args) throws InterruptedException, IOException {
         Props props = Props.getProps();
+        FileHelper fileHelper = new FileHelper();
         while (true) {
 //          Get entry<fileTimeUpdate:fileName> for most fresh file
-            var fileHelper = new FileHelper();
-            var latestFile = fileHelper.getLatestFile(props.getSourceFolder());
+            Map.Entry<FileTime,Path> latestFile = fileHelper.getLatestFile(props.getSourceFolder());
 //          On new update start analyzing, check file size as well
             if(latestFile.getKey().toMillis()> props.getLastFileTime().toMillis() && Files.size(latestFile.getValue())>200_000) {
-                System.out.println(latestFile.getKey() + "  ***  " + latestFile.getValue());
+                System.out.println(new SimpleDateFormat("dd-MM-YYYY hh:mm").format(latestFile.getKey()) + "  ***  "
+                        + latestFile.getValue().getFileName());
                 previous = new ArrayList<>(now);
 //              Read new file to 'now' ArrayList
                 fileHelper.readFile(latestFile.getValue(), now);
@@ -33,7 +37,7 @@ public class Main {
                                     "DROP TABLE IF EXISTS previous; " +
                                     "CREATE TABLE previous AS TABLE now; " +
                                     "TRUNCATE now;";
-                    var statement = conn.prepareStatement(pushNowIntoPrevious);
+                    PreparedStatement statement = conn.prepareStatement(pushNowIntoPrevious);
                     statement.executeUpdate();
                     now.parallelStream().forEach(o-> o.pushToDB(conn));
                     conn.commit();
@@ -51,20 +55,20 @@ public class Main {
                             "FROM now JOIN previous USING (code) WHERE (now.open_interest!=previous.open_interest) " +
                             "AND ((now.open_interest-previous.open_interest)*now.theoretical_price/1000000) NOT BETWEEN -1 AND 1;";
                     statement = conn.prepareStatement(check);
-                    var rs = statement.executeQuery();
+                    ResultSet rs = statement.executeQuery();
                     while (rs.next()){
                         if (rs.getString("code").startsWith("RI"))
                             ri.add(new Record(rs));
                         else others.add(new Record(rs));
                     }
-                    ri.forEach(x -> System.out.println("RI=" + x));
-                    others.forEach(x -> System.out.println("Other=" + x));
 
-                    ri.forEach(r->r.pushToDB(conn,"ri"));
-                    others.forEach(r->r.pushToDB(conn, "others"));
+                    ri.forEach(r->{r.pushToDB(conn,"ri");
+                                    System.out.println(r);});
+                    others.forEach(r->{r.pushToDB(conn, "others");
+                                    System.out.println(r);});
                     conn.commit();
 //      On new file found
-                    if(!Files.isSameFile(latestFile.getValue(),props.getLastFile())){
+                    if(!latestFile.getValue().equals(props.getLastFile())){
                         System.out.println("New File found=" + latestFile.getValue());
 //                      Clear 'riDay' and 'othersDay' lists
                         riDay.clear();
@@ -85,16 +89,27 @@ public class Main {
                                 riDay.add(new Record(rs));
                             else othersDay.add(new Record(rs));
                         }
-                        riDay.forEach(x -> System.out.println("riDay=" + x));
-                        othersDay.forEach(x -> System.out.println("otherDay=" + x));
 
-                        riDay.forEach(r->r.pushToDB(conn, "ri_day"));
-                        othersDay.forEach(r->r.pushToDB(conn, "others_day"));
+                        riDay.forEach(r->{r.pushToDB(conn, "ri_day");
+                                        System.out.println(r);});
+                        othersDay.forEach(r->{r.pushToDB(conn, "others_day");
+                                        System.out.println(r);});
 
                         previousDay=new ArrayList<>(previous);
+
+                        String dateForArchive = "SELECT DISTINCT date FROM previous_day;";
+                        statement = conn.prepareStatement(dateForArchive);
+                        rs = statement.executeQuery();
+                        conn.commit();
+                        String tableDate=null;
+                        while (rs.next()){
+                            tableDate=rs.getString("date");
+                        }
+
                         String onNewFile =
                                 "TRUNCATE ri; " +
                                 "TRUNCATE others;" +
+                                "ALTER TABLE previous_day RENAME TO \"" + tableDate + "\";" +
                                 "DROP TABLE IF EXISTS previous_day;" +
                                 "CREATE TABLE previous_day AS TABLE previous;" +
                                 "WITH to_archive_ri AS (DELETE FROM ri_day WHERE expiry < NOW() RETURNING *)" +
@@ -106,15 +121,16 @@ public class Main {
                         statement = conn.prepareStatement(onNewFile);
                         statement.executeUpdate();
                         conn.commit();
-                }
-
-                } catch (SQLException e) {
+                    }
+                } catch (Exception e) {
                     e.printStackTrace();
+                    Logger.getLogger().logIt(e);
                 }
 //              Update 'lastFile' and 'lastFileTime' with new values
                 props.setLastFile(latestFile.getValue());
+                System.out.println("Waiting for update");
             }
-            Thread.sleep(5000);
+            Thread.sleep(10000);
         }
     }
 
