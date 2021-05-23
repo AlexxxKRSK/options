@@ -11,22 +11,32 @@ public class Props {
     private static final File file = new File("Properties.properties");
 //    private static final File file = new File("C:\\Users\\user\\IdeaProjects\\options\\Properties.properties");
     private final Properties properties;
+
+    public Properties getProperties() {
+        return properties;
+    }
+
     private final String url;
     private final String user;
     private final String pass;
     private final Path sourceFolder;
     private Path lastFile;
     private FileTime lastFileTime;
+    private final int timeOut;
+
+    public int getTimeOut() {
+        return timeOut;
+    }
 
     private Props() {
         properties = new Properties();
         loadProperties(properties);
-
+        timeOut = Integer.parseInt(properties.getProperty("timeOut", "1000"));
         url = properties.getProperty("url");
         user = properties.getProperty("user");
         pass = properties.getProperty("pass");
         sourceFolder = new File(properties.getProperty("sourceFolder")).toPath();
-        lastFile = new File(properties.getProperty("lastFile")).toPath();
+        lastFile = new File(properties.getProperty("lastFile", "0")).toPath();
         lastFileTime = FileTime.fromMillis(Long.parseLong(properties.getProperty("lastFileTime")));
         if (!Files.exists(lastFile)) {
             lastFile = sourceFolder;

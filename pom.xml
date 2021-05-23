@@ -26,12 +26,6 @@
         <maven.compiler.target>16</maven.compiler.target>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-    </repositories>
     <dependencies>
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -45,9 +39,9 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
-            <groupId>com.github.zcxv</groupId>
-            <artifactId>nproperty</artifactId>
-            <version>1.4.1</version>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>javax.mail</artifactId>
+            <version>1.6.2</version>
         </dependency>
     </dependencies>
 

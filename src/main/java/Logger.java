@@ -23,7 +23,8 @@ public class Logger {
 
     public void logIt (Exception e){
         try (BufferedWriter bfw = new BufferedWriter(new FileWriter(logfile,true))){
-            bfw.append(LocalDateTime.now().format(DateTimeFormatter.ofPattern("hh:mm:ss dd-MM-yyyy")) + " * " + e.toString() + "\n");
+            bfw.append(LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss dd-MM-yyyy"))
+                    + " * " + e.toString() + "\n");
         } catch (IOException ioException) {
             ioException.printStackTrace();
         }

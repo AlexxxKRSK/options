@@ -40,15 +40,23 @@ public class Record {
     @Override
     public String toString() {
         return "Record{" +
-                " code=" + code +
+                "code=" + code +
                 ", expiry=" + expiry +
                 ", base=" + base +
                 ", type=" + type +
                 ", strike=" + strike +
-                ", moneyChange=" + moneyChange +
-                ", level=" + level +
-                ", openInterestChange=" + openInterestChange +
+                ", moneyChange=" + Math.round(moneyChange) +
+                ", level=" + Math.round(level) +
+                ", openInterestChange=" + Math.round(openInterestChange) +
                 '}';
+    }
+    public String toMailString() {
+        return "{" + base +
+                "\t" + expiry +
+                "\t" + type +
+                "\t" + strike +
+                "\t" + Math.round(moneyChange) +
+                "\t" + Math.round(level) + '}';
     }
 
     public Record(ResultSet rs) throws SQLException {
@@ -69,7 +77,7 @@ public class Record {
     }
 
     public void pushToDB(Connection conn, String table) {
-        String sql = "INSERT INTO "+ table + " VALUES (?,?,?,?,?, ?,?,?,?,?, ?,?) ON CONFLICT DO NOTHING;";
+        String sql = "INSERT INTO "+ table + " VALUES (?,?,?,?,?, ?,?,?,?,?, ?,?);"; //'" ON CONFLICT DO NOTHING;";
         try (PreparedStatement statement = conn.prepareStatement(sql)){
             statement.setObject(1,this.getTime());
             statement.setString(2, this.getCode());
@@ -88,6 +96,7 @@ public class Record {
             statement.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+            Logger.getLogger().logIt(e);
         }
     }
 

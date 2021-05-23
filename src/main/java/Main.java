@@ -25,7 +25,7 @@ public class Main {
             Map.Entry<FileTime,Path> latestFile = fileHelper.getLatestFile(props.getSourceFolder());
 //          On new update start analyzing, check file size as well
             if(latestFile.getKey().toMillis()> props.getLastFileTime().toMillis() && Files.size(latestFile.getValue())>200_000) {
-                System.out.println(new SimpleDateFormat("dd-MM-YYYY hh:mm").format(latestFile.getKey().toMillis()) + "  ***  "
+                System.out.println(new SimpleDateFormat("dd-MM-yyyy HH:mm").format(latestFile.getKey().toMillis()) + "  ***  "
                         + latestFile.getValue().getFileName());
                 previous = new ArrayList<>(now);
 //              Read new file to 'now' ArrayList
@@ -62,11 +62,18 @@ public class Main {
                         else others.add(new Record(rs));
                     }
 
+                    StringBuilder mail = new StringBuilder("Base\texpiry\ttype\tstrike\tmoneyChange\tlevel");
                     ri.forEach(r->{r.pushToDB(conn,"ri");
-                                    System.out.println(r);});
+                        System.out.println(r);
+                        if(r.getMoneyChange() > 5) mail.append("\n" + r.toMailString());});
                     others.forEach(r->{r.pushToDB(conn, "others");
-                                    System.out.println(r);});
+                        System.out.println(r);
+                        if(r.getMoneyChange() > 5) mail.append("\n").append(r.toMailString());});
                     conn.commit();
+                    if(mail.length()>42) {
+                        SendEMail.send("5 min report", mail.toString());
+                    }
+
 //      On new file found
                     if(!latestFile.getValue().equals(props.getLastFile())){
                         System.out.println("New File found=" + latestFile.getValue());
@@ -75,13 +82,13 @@ public class Main {
                         othersDay.clear();
 //                      Select new deals greater then 10 mln RUB and insert into "riDay" and "othersDay" tables
                         String checkDay =
-                                "SELECT now.time, code, now.base, now.type, now.strike, now.expiry, " +
-                                "(now.open_interest-previous_day.open_interest)*now.theoretical_price/1000000 as money_change, " +
-                                "CASE WHEN now.type = 'Call' THEN (now.strike + now.theoretical_price) ELSE (now.strike - now.theoretical_price) END as level," +
-                                " now.theoretical_price, now.open_interest as oiNow, previous_day.open_interest as oi_prev, " +
-                                "(now.open_interest - previous_day.open_interest)/ now.open_interest*100 as oi_change " +
-                                "FROM now JOIN previous_day USING (code) WHERE (now.open_interest!=previous_day.open_interest) " +
-                                "AND ABS((now.open_interest-previous_day.open_interest)*now.theoretical_price/1000000)>10;";
+                                "SELECT previous.date, code, previous.base, previous.type, previous.strike, previous.expiry, " +
+                                "(previous.open_interest-previous_day.open_interest)*previous.theoretical_price/1000000 as money_change, " +
+                                "CASE WHEN previous.type = 'Call' THEN (previous.strike + previous.theoretical_price) ELSE (previous.strike - previous.theoretical_price) END as level," +
+                                " previous.theoretical_price, previous.open_interest as oiNow, previous_day.open_interest as oi_prev, " +
+                                "(previous.open_interest - previous_day.open_interest)/ previous.open_interest*100 as oi_change " +
+                                "FROM previous JOIN previous_day USING (code) WHERE (previous.open_interest!=previous_day.open_interest) " +
+                                "AND ABS((previous.open_interest-previous_day.open_interest)*previous.theoretical_price/1000000)>10;";
                         statement = conn.prepareStatement(checkDay);
                         rs = statement.executeQuery();
                         while (rs.next()){
@@ -90,10 +97,17 @@ public class Main {
                             else othersDay.add(new Record(rs));
                         }
 
+                        StringBuilder mailDay = new StringBuilder("Base\texpiry\ttype\tstrike\tmoneyChange\tlevel");
                         riDay.forEach(r->{r.pushToDB(conn, "ri_day");
-                                        System.out.println(r);});
+                                        System.out.println(r);
+                                        mailDay.append("\n" + r.toMailString());});
                         othersDay.forEach(r->{r.pushToDB(conn, "others_day");
-                                        System.out.println(r);});
+                                        System.out.println(r);
+                                        mailDay.append("\n").append(r.toMailString());});
+
+                        if(mailDay.length()>42) {
+                            SendEMail.send("Daily report", mailDay.toString());
+                        }
 
                         previousDay=new ArrayList<>(previous);
 
@@ -107,10 +121,10 @@ public class Main {
                         }
 
                         String onNewFile =
-                                "TRUNCATE ri; " +
-                                "TRUNCATE others;" +
                                 "ALTER TABLE previous_day RENAME TO \"" + tableDate + "\";" +
                                 "DROP TABLE IF EXISTS previous_day;" +
+                                "TRUNCATE ri; " +
+                                "TRUNCATE others;" +
                                 "CREATE TABLE previous_day AS TABLE previous;" +
                                 "WITH to_archive_ri AS (DELETE FROM ri_day WHERE expiry < NOW() RETURNING *)" +
                                 "INSERT INTO archive_ri " +
@@ -130,8 +144,7 @@ public class Main {
                 props.setLastFile(latestFile.getValue());
                 System.out.println("Waiting for update");
             }
-            Thread.sleep(10000);
+            Thread.sleep(props.getTimeOut());
         }
     }
-
 }
